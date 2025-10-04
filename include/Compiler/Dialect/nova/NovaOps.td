@@ -51,7 +51,7 @@ def Nova_AddOp : Nova_BinaryOp<"add", [Commutative]> {
 }
 //-------------------------sub------------------------------------
 
-def Nova_AddOp : Nova_BinaryOp<"sub",[HLO_CompatibleOperandsAndResultType] > {
+def Nova_SubOp : Nova_BinaryOp<"sub",[] > {
   let summary = "Elementwise tensor subtraction";
   let description = [{
     Subtracts two tensors elementwise. Result type is automatically inferred.
