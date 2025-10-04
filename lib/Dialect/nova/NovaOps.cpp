@@ -61,8 +61,17 @@ LogicalResult AddOp::verify() {
 //----------------------sub op functions ---------------------
 // 1 . inferReturnTypes
 
+ /*constraints on input : 
+  1 -> 2 operands 
+  2 -> They need to be same or compatible type 
+  3 -> compatible means they can be made same by broadcasting
+  4 -> should supported data types : int,float,
 
-LogicalResult AddOp::inferReturnTypes(
+  constraint on output:
+  1-> result and operands type should be same
+  2 -> if broadcaseted result type needs to be same as operands type after broadcasting*/
+
+LogicalResult SubOp::inferReturnTypes(
     MLIRContext *context,
     std::optional<Location> loc,
     ValueRange operands,
@@ -79,12 +88,4 @@ LogicalResult AddOp::inferReturnTypes(
   }
   return failure();
 }
-  /*constraints on input : 
-  1 -> 2 operands 
-  2 -> They need to be same or compatible type 
-  3 -> compatible means they can be made same by broadcasting
-  4 -> should supported data types : int,float,
-
-  constraint on output:
-  1-> result and operands type should be same
-  2 -> if broadcaseted result type needs to be same as operands type after broadcasting*/
+ 
