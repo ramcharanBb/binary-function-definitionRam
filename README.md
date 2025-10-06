@@ -6,3 +6,7 @@ add<br>
 sub<br>
 mul<br>
 div<br>
+rem<br>
+pow<br>
+max<br>
+min<br>
