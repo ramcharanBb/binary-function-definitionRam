@@ -174,3 +174,42 @@ LogicalResult MinOp::inferReturnTypes(
     llvm::SmallVectorImpl<Type> &inferredReturnTypes) {
       return BinaryInferReturnTypes(context, loc, operands, attributes, properties, regions, inferredReturnTypes);
     }
+//-------------------------------------------------    
+//andOp
+//-------------------------------------------------
+LogicalResult AndOp::inferReturnTypes(
+    MLIRContext *context,
+    std::optional<Location> loc,
+    ValueRange operands,
+    DictionaryAttr attributes,
+    OpaqueProperties properties,
+    RegionRange regions,
+    llvm::SmallVectorImpl<Type> &inferredReturnTypes) {
+      return BinaryInferReturnTypes(context, loc, operands, attributes, properties, regions, inferredReturnTypes);
+    }
+//-------------------------------------------------    
+//orOp
+//-------------------------------------------------
+LogicalResult OrOp::inferReturnTypes(
+    MLIRContext *context,
+    std::optional<Location> loc,
+    ValueRange operands,
+    DictionaryAttr attributes,
+    OpaqueProperties properties,
+    RegionRange regions,
+    llvm::SmallVectorImpl<Type> &inferredReturnTypes) {
+      return BinaryInferReturnTypes(context, loc, operands, attributes, properties, regions, inferredReturnTypes);
+    }
+//-------------------------------------------------    
+//xorOp
+//-------------------------------------------------
+LogicalResult XorOp::inferReturnTypes(
+    MLIRContext *context,
+    std::optional<Location> loc,
+    ValueRange operands,
+    DictionaryAttr attributes,
+    OpaqueProperties properties,
+    RegionRange regions,
+    llvm::SmallVectorImpl<Type> &inferredReturnTypes) {
+      return BinaryInferReturnTypes(context, loc, operands, attributes, properties, regions, inferredReturnTypes);
+    }
