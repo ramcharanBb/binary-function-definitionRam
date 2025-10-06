@@ -54,13 +54,38 @@ def Nova_AddOp : Nova_BinaryOp<"add", [Commutative]> {
 def Nova_SubOp : Nova_BinaryOp<"sub",[] > {
   let summary = "Elementwise tensor subtraction";
   let description = [{
-    Subtracts two tensors elementwise. Result type is automatically inferred.
+    Subtracts two tensors elementwise.
 
     Example:
       %r = nova.sub %a, %b : tensor<2x2xf32>, tensor<2x2xf32>
   }];
+  //let hasVerifier =1;
 }
 
+//-------------------------multiply------------------------------------
+
+def Nova_MulOp : Nova_BinaryOp<"mul",[Commutative] > {
+  let summary = "Elementwise tensor multipliucation";
+  let description = [{
+    multiplies two tensors elementwise.
+    eg: [1,2,3] x [3,4,5] = [3,8,15]
+
+    Example:
+      %r = nova.mul %a, %b : tensor<2x2xf32>, tensor<2x2xf32>
+  }];
+  //let hasVerifier =1;
+}
+//------------------------divide------------------------
+
+def Nova_DivOp :Nova_BinaryOp<"div",[]>{
+  let summary ="Elementwise tensor division";
+  let description =[{ divides two tensor elementwise.
+    Example:
+      %r = nova.div %a, %b : tensor<2x2xf32>, tensor<2x2xf32>
+  }];
+  //let hasVerifier=1;
+
+}
 
 
 //-----------------------------------------------------
