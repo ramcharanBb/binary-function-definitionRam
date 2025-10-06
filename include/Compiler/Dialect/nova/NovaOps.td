@@ -99,7 +99,7 @@ def Nova_RemOp :Nova_BinaryOp<"rem",[]>{
 
 def Nova_PowOp :Nova_BinaryOp<"pow",[]>{
   let summary ="Elementwise tensor remainder finding";
-  let description =[{Performs element-wise remainder of dividend lhs and divisor rhs. 
+  let description =[{Performs element-wise power of lhs to the rhs
   computation example :
   a=[1,2,3] b=[2,2,4] result= [1,4,81]
   
@@ -111,7 +111,7 @@ def Nova_PowOp :Nova_BinaryOp<"pow",[]>{
 //------------------------max------------------------
 
 def Nova_MaxOp :Nova_BinaryOp<"max",[Commutative]>{
-  let summary ="Elementwise tensor remainder finding";
+  let summary ="Elementwise tensor maximum                                                                                                                                    finding";
   let description =[{Performs element-wise max operation on tensors . 
   like 
   a=[1,2,3] b=[2,4,2] result= [2,4,3]
@@ -124,7 +124,7 @@ def Nova_MaxOp :Nova_BinaryOp<"max",[Commutative]>{
 //------------------------min------------------------
 
 def Nova_MinOp :Nova_BinaryOp<"min",[Commutative]>{
-  let summary ="Elementwise tensor remainder finding";
+  let summary ="Elementwise tensor Minimum  finding";
   let description =[{Performs element-wise min operation on tensors 
   like 
   a=[1,2,3] b=[2,4,2] result= [1,2,2]
@@ -134,5 +134,40 @@ def Nova_MinOp :Nova_BinaryOp<"min",[Commutative]>{
   }];
 
 }
+//------------------------and------------------------
+
+def Nova_AndOp :Nova_BinaryOp<"and",[Commutative]>{
+  let summary ="Elementwise tensor doing and";
+  let description =[{Performs element-wise binary and operation on tensors 
+  like 
+  a=[1,2,3] b=[2,4,2] result= [0,0,1]  
+  Example:
+      %r = nova.and %a, %b : tensor<2x2xf32>, tensor<2x2xf32>
+  }];
+}
+//------------------------or------------------------
+
+def Nova_OrOp :Nova_BinaryOp<"or",[Commutative]>{
+  let summary ="Elementwise tensor doing or";
+  let description =[{Performs element-wise binary or operation on tensors 
+  like 
+  a=[1,2,3] b=[2,4,2] result= [3,6,3]  
+  Example:
+      %r = nova.or %a, %b : tensor<2x2xf32>, tensor<2x2xf32>
+  }];
+}
+//------------------------xor------------------------
+
+def Nova_XorOp :Nova_BinaryOp<"xor",[Commutative]>{
+  let summary ="Elementwise tensor doing xor";
+  let description =[{Performs element-wise binary xor operation on tensors 
+  like 
+  a=[1,2,3] b=[2,4,2] result= [3,6,1]  
+  Example:
+      %r = nova.xor %a, %b : tensor<2x2xf32>, tensor<2x2xf32>
+  }];
+}
+
+
 //-----------------------------------------------------
 #endif // NOVA_OPS
