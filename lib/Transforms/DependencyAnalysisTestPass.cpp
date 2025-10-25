@@ -1,4 +1,6 @@
 #include "Compiler/Transforms/DependencyAnalysisTestPass.h"
+#include "Compiler/Transforms/MemoryAccessAnalysis.h"
+
 #include "Compiler/Transforms/DependencyAnalysis.h"
 #include "mlir/Dialect/Affine/IR/AffineOps.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
@@ -11,6 +13,31 @@ namespace mlir {
 namespace nova {
 
 void analyzeLoop(affine::AffineForOp forOp) {
+    // Memory access analysis
+  MemoryAccessAnalysis memAnalysis(forOp);
+  llvm::outs() << "  Memory access patterns:\n";
+  for (auto &entry : memAnalysis.getPatterns()) {
+    auto &p = entry.second;
+    llvm::outs() << "    MemRef: ";
+    entry.first.print(llvm::outs());
+    llvm::outs() << "\n";
+    llvm::outs() << "      Type: ";
+    switch (p.type) {
+      case MemoryAccessPattern::Type::Sequential: llvm::outs() << "Sequential"; break;
+      case MemoryAccessPattern::Type::Strided: llvm::outs() << "Strided"; break;
+      case MemoryAccessPattern::Type::Broadcast: llvm::outs() << "Broadcast"; break;
+      case MemoryAccessPattern::Type::Irregular: llvm::outs() << "Irregular"; break;
+    }
+    llvm::outs() << ", Stride: " << p.stride
+                 << ", ElementSize: " << p.elementSize
+                 << ", NumAccesses: " << p.numAccesses
+                 << ", SpatialLocality: " << p.spatialLocality
+                 << "\n";
+  }
+   
+   llvm::outs() << "========================================\n\n";
+  llvm::outs().flush();
+  
   DependencyAnalysis depAnalysis(forOp);
   llvm::outs() << "\n=== Dependency Analysis for loop at ";
   forOp->getLoc().print(llvm::outs());
@@ -53,6 +80,7 @@ void analyzeLoop(affine::AffineForOp forOp) {
       llvm::outs() << "\n";
     }
   }
+  
   llvm::outs() << "\n  Summary:\n";
   unsigned minDist = depAnalysis.getMinDependencyDistance();
   llvm::outs() << "    Minimum dependency distance: ";
@@ -69,7 +97,9 @@ void analyzeLoop(affine::AffineForOp forOp) {
   llvm::outs() << "    Has tight dependencies (≤ 4): "
                << (tightDeps ? "Yes" : "No") << "\n";
   llvm::outs() << "========================================\n\n";
-  llvm::outs().flush(); 
+  llvm::outs().flush();
+
+
 
   // Recursively analyze nested loops
   for (Operation &nestedOp : forOp.getBody()->getOperations()) {

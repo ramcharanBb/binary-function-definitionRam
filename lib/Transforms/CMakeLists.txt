@@ -4,6 +4,7 @@ add_mlir_library(CompilerTransforms
   FuseMatmulInit.cpp
   DependencyAnalysisTestPass.cpp
   DependencyAnalysis.cpp
+  MemoryAccessAnalysis.cpp
 
   LINK_LIBS PUBLIC
   MLIRIR

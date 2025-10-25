@@ -15,6 +15,7 @@ add_mlir_dialect_library(MLIRTransformPasses
   ${PROJECT_SOURCE_DIR}/lib/Transforms/DependencyAnalysis.cpp
   ${PROJECT_SOURCE_DIR}/lib/Transforms/DependencyAnalysisTestPass.cpp
   ${PROJECT_SOURCE_DIR}/lib/Transforms/CleanupPass.cpp
+  ${PROJECT_SOURCE_DIR}/lib/Transforms/MemoryAccessAnalysis.cpp
 
   ADDITIONAL_HEADER_DIRS
     ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms
@@ -61,6 +62,7 @@ install(FILES
   ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/AffineFullUnroll.h
   ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/DependencyAnalysis.h
   ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/DependencyAnalysisTestPass.h
+  ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/MemoryAccessAnalysis.h
   ${CMAKE_CURRENT_BINARY_DIR}/Passes.h.inc
   DESTINATION include/Compiler/Transforms
 )

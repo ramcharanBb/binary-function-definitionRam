@@ -1,5 +1,6 @@
 #include "Compiler/Transforms/DependencyAnalysis.h"
 #include "mlir/Dialect/Affine/Analysis/AffineAnalysis.h"
+#include "Compiler/Transforms/MemoryAccessAnalysis.h"
 #include "mlir/Dialect/Affine/Analysis/Utils.h"
 #include "mlir/Dialect/Affine/Analysis/AffineStructures.h"
 #include "mlir/Dialect/MemRef/IR/MemRef.h"
@@ -94,17 +95,32 @@ unsigned DependencyAnalysis::computeDistance(Operation *src, Operation *dst) {
       srcAccess, dstAccess, loopDepth, &constraints, &components, false);
 
   if (depResult.value != mlir::affine::DependenceResult::HasDependence)
-    return 0;
+    return UINT_MAX;
 
+  MemoryAccessAnalysis memAnalysis(forOp);
+  Value memref = nullptr;
+  if (auto loadOp = dyn_cast<affine::AffineLoadOp>(src))
+    memref = loadOp.getMemRef();
+  else if (auto storeOp = dyn_cast<affine::AffineStoreOp>(src))
+    memref = storeOp.getMemRef();
+  unsigned stride = 1;
+if (memref) {
+    stride = memAnalysis.getStride(memref);
+    stride = std::max<unsigned>(1, stride);
+}
   unsigned minDistance = UINT_MAX;
   for (auto &comp : components) {
-    if (comp.lb.has_value() && comp.lb.value() > 0)
-      minDistance = std::min(minDistance, static_cast<unsigned>(comp.lb.value()));
-    else if (comp.ub.has_value() && comp.ub.value() < 0)
-      minDistance = std::min(minDistance, static_cast<unsigned>(-comp.ub.value()));
+    if (comp.lb.has_value())
+      minDistance = std::min(minDistance, static_cast<unsigned>(std::abs(comp.lb.value())));
+    else if (comp.ub.has_value())
+      minDistance = std::min(minDistance, static_cast<unsigned>(std::abs(comp.ub.value())));
     else
-      minDistance = std::min(minDistance, 0u); // loop-carried, distance unknown → 0
+      minDistance = 1;
   }
+  if (minDistance != UINT_MAX)
+    llvm:: outs() << "Computed raw minDistance: " << minDistance << "\n";
+    minDistance *= stride;
+
   return minDistance;
 }
 
