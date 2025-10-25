@@ -1,38 +1,74 @@
-cmake_minimum_required(VERSION 3.20)
-project(mlir-compiler LANGUAGES CXX C)
+#===- CMakeLists.txt - MLIR Transform Passes --------------------*- CMake -*-===#
+# Gen pass declarations from TableGen definitions
+set(LLVM_TARGET_DEFINITIONS Passes.td)
+mlir_tablegen(Passes.h.inc -gen-pass-decls -name Transform)
+add_public_tablegen_target(NovaTransformPassIncGen)
 
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to conform to")
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+# Generate pass documentation
+add_mlir_doc(Passes TransformPasses Passes/ -gen-pass-doc)
 
-# Find MLIR (this will also find LLVM)
-find_package(MLIR REQUIRED CONFIG)
+add_mlir_dialect_library(MLIRTransformPasses
+  # AffineFullUnroll implementation (local files)
+  AffineFullUnroll.cpp
+  
+  # Affine Loop Transform implementations (from lib/Transforms/Affine/)
+  ${PROJECT_SOURCE_DIR}/lib/Transforms/DependencyAnalysis.cpp
+  ${PROJECT_SOURCE_DIR}/lib/Transforms/DependencyAnalysisTestPass.cpp
+  ${PROJECT_SOURCE_DIR}/lib/Transforms/CleanupPass.cpp
+  ${PROJECT_SOURCE_DIR}/lib/Transforms/MemoryAccessAnalysis.cpp
 
-message(STATUS "Using MLIRConfig.cmake in: ${MLIR_DIR}")
-message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+  ADDITIONAL_HEADER_DIRS
+    ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms
 
-# Add MLIR and LLVM CMake modules
-list(APPEND CMAKE_MODULE_PATH "${MLIR_CMAKE_DIR}")
-list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
+  DEPENDS
+    NovaTransformPassIncGen
 
-include(TableGen)
-include(AddLLVM)
-include(AddMLIR)
-include(HandleLLVMOptions)
+  LINK_LIBS PUBLIC
+    # Core MLIR libraries
+    MLIRAffineDialect
+    MLIRAffineUtils
+    MLIRAffineAnalysis
+    MLIRFuncDialect
+    MLIRMemRefDialect
+    MLIRArithDialect
+    MLIRPass
+    MLIRTransforms
+    
+    # IR and support libraries
+    MLIRIR
+    MLIRSupport
+    MLIRTransformUtils
+    
+    # Analysis libraries
+    MLIRAnalysis
+)
 
-# Include directories
-include_directories(${LLVM_INCLUDE_DIRS})
-include_directories(${MLIR_INCLUDE_DIRS})
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_BINARY_DIR}/include)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+# Configure include directories
+target_include_directories(MLIRTransformPasses PRIVATE
+  ${PROJECT_BINARY_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_BINARY_DIR}/include/Compiler/Transforms
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
-# Link directories (helps with lib resolution)
-link_directories(${LLVM_BUILD_LIBRARY_DIR})
+# ===----------------------------------------------------------------------===//
+# Install Headers
+# ===----------------------------------------------------------------------===//
 
-# Add definitions
-add_definitions(${LLVM_DEFINITIONS})
+install(FILES
+  # Main transform headers
+  ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/Passes.h
+  ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/AffineFullUnroll.h
+  ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/DependencyAnalysis.h
+  ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/DependencyAnalysisTestPass.h
+  ${PROJECT_SOURCE_DIR}/include/Compiler/Transforms/MemoryAccessAnalysis.h
+  ${CMAKE_CURRENT_BINARY_DIR}/Passes.h.inc
+  DESTINATION include/Compiler/Transforms
+)
 
-# Build subdirectories
-add_subdirectory(include)
-add_subdirectory(lib)
-add_subdirectory(tools)
+
+if(MLIR_INCLUDE_TESTS)
+  add_subdirectory(test)
+endif()
+# ===----------------------------------------------------------------------===//
