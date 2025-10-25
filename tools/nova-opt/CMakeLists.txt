@@ -8,7 +8,14 @@ target_link_libraries(nova-opt PRIVATE
   MLIRTransforms
   MLIRAnalysis
   MLIRIR
+  MLIRPass
+  MLIRTransformUtils
+  MLIRMlirOptMain
   MLIRNova
+
+  CompilerTransforms
+  MLIRTransformPasses
+
   # Add all MLIR dialects
   MLIRFuncDialect
   MLIRArithDialect

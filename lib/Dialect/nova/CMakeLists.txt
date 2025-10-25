@@ -2,10 +2,11 @@
 add_mlir_dialect_library(MLIRNova
   NovaDialect.cpp
   NovaOps.cpp
+  NovaCanonicalizations.cpp
+  Broadcast.cpp
 
   ADDITIONAL_HEADER_DIRS
   ${PROJECT_SOURCE_DIR}/include/Compiler/Dialect/nova
-
 
   DEPENDS
   MLIRNovaOpsIncGen
@@ -14,11 +15,10 @@ add_mlir_dialect_library(MLIRNova
   MLIRIR
   MLIRInferTypeOpInterface
   MLIRSideEffectInterfaces
-  MLIRSupport
+  MLIRArithDialect
 )
 
 target_include_directories(MLIRNova PRIVATE
   # ${CMAKE_CURRENT_BINARY_DIR}
   ${PROJECT_BINARY_DIR}/include
-
 )
